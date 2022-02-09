@@ -1,0 +1,4 @@
+.DS_Store
+/server/data.json
+/server/node_modules
+/server/main.js
