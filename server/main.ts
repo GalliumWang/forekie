@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import crypto from "crypto";
 import cors from "cors";
 import dotenv from "dotenv";
+import vhost from "vhost";
 
 /**
  * 生成自定义的 UUID
@@ -135,8 +136,7 @@ webserver_2.options("*", cors());
 
 console.info(`forekie | 启动中 N=${N}, C-ID='${CACHE_IDENTIFIER}' ...`);
 console.info(
-  `forekie | There are ${Math.max(maxN - 1 - (STORAGE.index ?? 1), 0)}/${
-    maxN - 1
+  `forekie | There are ${Math.max(maxN - 1 - (STORAGE.index ?? 1), 0)}/${maxN - 1
   } unique identifiers left.`
 );
 
@@ -242,8 +242,8 @@ class Profile {
   public static get(uid: string): Profile {
     return this.has(uid)
       ? Array.from(this.list)
-          .filter((profile: Profile) => profile.uid === uid)
-          ?.pop()
+        .filter((profile: Profile) => profile.uid === uid)
+        ?.pop()
       : null;
   }
   public static has(uid: string): boolean {
@@ -570,12 +570,12 @@ webserver_2.get("*", (req: express.Request, res: express.Response) => {
   });
 });
 
-webserver_2.listen(WEBSERVER_PORT_2, () =>
-  console.info(
-    `tracking model '${WEBSERVER_DOMAIN_2}' running on port:`,
-    WEBSERVER_PORT_2
-  )
-);
+// webserver_2.listen(WEBSERVER_PORT_2, () =>
+//   console.info(
+//     `tracking model '${WEBSERVER_DOMAIN_2}' running on port:`,
+//     WEBSERVER_PORT_2
+//   )
+// );
 
 webserver_1.use(
   "/assets",
@@ -593,7 +593,7 @@ webserver_1.get("/", (_req: express.Request, res: express.Response) => {
 });
 
 // 正常发送首页的 favicon
-webserver_1.get( 
+webserver_1.get(
   "/favicon.ico",
   (_req: express.Request, res: express.Response) => {
     res.sendFile(path.join(path.resolve(), "www/favicon.ico"));
@@ -627,10 +627,19 @@ webserver_1.get("*", (_req: express.Request, res: express.Response) => {
 });
 
 
-webserver_1.listen(WEBSERVER_PORT_1, () =>
+// webserver_1.listen(WEBSERVER_PORT_1, () =>
+//   console.info(
+//     `homepage '${WEBSERVER_DOMAIN_1}' running on port:`,
+//     WEBSERVER_PORT_1
+//   )
+// );
+
+let mainApp = express();
+mainApp.use(vhost("gallium-forekie.xyz", webserver_1));
+mainApp.use(vhost("demo.gallium-forekie.xyz", webserver_2));
+mainApp.listen(80, () =>
   console.info(
-    `homepage '${WEBSERVER_DOMAIN_1}' running on port:`,
-    WEBSERVER_PORT_1
+    "mainApp start"
   )
 );
 
