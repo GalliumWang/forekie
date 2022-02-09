@@ -1,0 +1,15 @@
+[Unit]
+Description=Forekie
+
+[Service]
+ExecStart=sudo /home/ubuntu/.nvm/versions/node/v16.13.2/bin/node --experimental-json-modules /home/ubuntu/forekie/server/main.js
+Restart=always
+# User=nobody
+# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
+# Group=nogroup
+Environment=PATH=/home/ubuntu/.nvm/versions/node/v16.13.2/bin:/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/home/ubuntu/forekie/server
+
+[Install]
+WantedBy=multi-user.target
